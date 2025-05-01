@@ -157,7 +157,9 @@ risk_assessment_task = Task(
 )
 
 # Create your crew of Agents and pass the tasks to be performed by those agents.
-# The Process class helps to delegate the workflow to the Agents hierarchically (by a LLM Manager). 
+# The Process class helps to delegate the workflow to the Agents hierarchically (by a LLM Manager).
+# manager_llm (in Process.hierarchical) can infer task dependencies if you write task descriptions clearly and refer to prior task outputs.
+# However, it is better to set output_file and read by the next task to avoid any ambiguity and better logging.
 financial_trading_crew = Crew(
     agents=[data_analyst_agent, 
             trading_strategy_agent, 

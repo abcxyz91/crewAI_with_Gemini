@@ -29,7 +29,8 @@ llm = LLM(
 
 # Initialize the tools
 # SerperDevTool uses Serper API
-# MDXSearchTool uses OpenAI API by default but in this example using Google Gemini API.
+# MDXSearchTool uses OpenAI API by default but in this example using Google Gemini embedding.
+# Therefore, it needs google-generativeai package as a dependency
 search_tool = SerperDevTool()
 scrape_tool = ScrapeWebsiteTool()
 read_resume = FileReadTool(file_path='./fake_resume.md')

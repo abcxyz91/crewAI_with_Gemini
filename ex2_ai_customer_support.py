@@ -127,6 +127,7 @@ quality_assurance_review = Task(
 # Create your crew of Agents and pass the tasks to be performed by those agents.
 # Setting memory=True enables all Memories (Short Term, Long Term and Entity Memory) or response of each other
 # It was implemented by embedding the response of each agent by Gemini embedding model and storing it in a vector database (ChromaDB)
+# Therefore, it needs google-generativeai package as a dependency
 crew = Crew(
     agents=[support_agent, support_quality_assurance_agent],
     tasks=[inquiry_resolution, quality_assurance_review],

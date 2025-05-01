@@ -92,9 +92,6 @@ marketing_communications_agent = Agent(
 
 # Define your Tasks, and provide them a description, expected_output, agent, and tools
 # After getting LLM response, transform it into a structered JSON format following the Pydantic model
-# There is a known issue with human_input=True and the LiteLLM. POST Request sent from LiteLLM may missing some parameters
-# 1 github user suggests changing the LLM model to gemini-1.5-pro might fix the issue
-
 # Task 1: Venue search and selection
 venue_task = Task(
     description="Find a venue in {event_city} "
@@ -116,7 +113,7 @@ logistics_task = Task(
     expected_output="Confirmation of all logistics arrangements "
                     "including catering and equipment setup.",
     human_input=True,
-    async_execution=False,              # allows for asynchronous execution of the task
+    async_execution=True,               # allows for asynchronous execution of the task
     output_file="catering_report.md",   # outputs the report as a markdown file
     agent=logistics_manager
 )

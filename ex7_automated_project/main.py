@@ -60,50 +60,50 @@ class ProjectPlan(BaseModel):
 
 # Creating Agents
 project_planning_agent = Agent(
-  config=agents_config['project_planning_agent'],
-  llm=llm
+    config=agents_config['project_planning_agent'],
+    llm=llm
 )
 
 estimation_agent = Agent(
-  config=agents_config['estimation_agent'],
-  llm=llm
+    config=agents_config['estimation_agent'],
+    llm=llm
 )
 
 resource_allocation_agent = Agent(
-  config=agents_config['resource_allocation_agent'],
-  llm=llm
+    config=agents_config['resource_allocation_agent'],
+    llm=llm
 )
 
 # Creating Tasks
 task_breakdown = Task(
-  config=tasks_config['task_breakdown'],
-  agent=project_planning_agent
+    config=tasks_config['task_breakdown'],
+    agent=project_planning_agent
 )
 
 time_resource_estimation = Task(
-  config=tasks_config['time_resource_estimation'],
-  agent=estimation_agent
+    config=tasks_config['time_resource_estimation'],
+    agent=estimation_agent
 )
 
 resource_allocation = Task(
-  config=tasks_config['resource_allocation'],
-  agent=resource_allocation_agent,
-  output_pydantic=ProjectPlan # This is the structured output we want
+    config=tasks_config['resource_allocation'],
+    agent=resource_allocation_agent,
+    output_pydantic=ProjectPlan # This is the structured output we want
 )
 
 # Creating Crew
 crew = Crew(
-  agents=[
-    project_planning_agent,
-    estimation_agent,
-    resource_allocation_agent
-  ],
-  tasks=[
-    task_breakdown,
-    time_resource_estimation,
-    resource_allocation
-  ],
-  verbose=True
+    agents=[
+        project_planning_agent,
+        estimation_agent,
+        resource_allocation_agent
+    ],
+    tasks=[
+        task_breakdown,
+        time_resource_estimation,
+        resource_allocation
+    ],
+    verbose=True
 )
 
 # Set the input parameters and run the crew
@@ -131,17 +131,17 @@ project_requirements = """
 """
 
 inputs = {
-  'project_type': project,
-  'project_objectives': project_objectives,
-  'industry': industry,
-  'team_members': team_members,
-  'project_requirements': project_requirements
+    'project_type': project,
+    'project_objectives': project_objectives,
+    'industry': industry,
+    'team_members': team_members,
+    'project_requirements': project_requirements
 }
 
 # Run the crew
 result = crew.kickoff(inputs=inputs)
 
-# Optional, measure how much it would cost each time if this crew runs at scale.
+# Optional, measure how much it would cost each time if this crew runs at scale. (in case of ChatGPT 4o mini)
 import pandas as pd
 
 costs = 0.150 * (crew.usage_metrics.prompt_tokens + crew.usage_metrics.completion_tokens) / 1_000_000

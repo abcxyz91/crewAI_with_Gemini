@@ -35,7 +35,7 @@ planner = Agent(
               "Your work is the basis for "
               "the Content Writer to write an article on this topic.",
     allow_delegation=False,
-	verbose=False,
+	verbose=True,
     llm=llm
 )
 
@@ -58,7 +58,7 @@ writer = Agent(
               "when your statements are opinions "
               "as opposed to objective statements.",
     allow_delegation=False,
-    verbose=False,
+    verbose=True,
     llm=llm
 )
 
@@ -75,7 +75,7 @@ editor = Agent(
               "and also avoids major controversial topics "
               "or opinions when possible.",
     allow_delegation=False,
-    verbose=False,
+    verbose=True,
     llm=llm
 )
 
@@ -127,6 +127,7 @@ edit = Task(
 
 # Create your crew of Agents and pass the tasks to be performed by those agents.
 # The tasks will be performed sequentially (i.e they are dependent on each other), so the order of the task in the list matters.
+# If performed sequentially, the output of the previous task will be passed as input to the next task.
 crew = Crew(
     agents=[planner, writer, editor],
     tasks=[plan, write, edit],
