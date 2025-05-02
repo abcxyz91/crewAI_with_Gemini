@@ -113,13 +113,15 @@ logistics_task = Task(
     expected_output="Confirmation of all logistics arrangements "
                     "including catering and equipment setup.",
     human_input=True,
-    async_execution=True,               # allows for asynchronous execution of the task
+    async_execution=False,
     output_file="catering_report.md",   # outputs the report as a markdown file
     agent=logistics_manager
 )
 
 # Task 3: Make marketing plan
-# CrewAI framework requires that at most one asynchronous task can be executed at the end of the crew's task list.
+# Set async_execution=True means this task will run but does not wait for it to finish.
+# The kickoff() call returns — potentially before marketing_task finishes, and its output is not included in the return value of kickoff().
+# You can collect its result from the marketing_report.md file
 marketing_task = Task(
     description="Promote the {event_topic} "
                 "aiming to engage at least"
@@ -132,7 +134,7 @@ marketing_task = Task(
 )
 
 # Create your crew of Agents and pass the tasks to be performed by those agents.
-# Since async_execution=True for logistics_task and marketing_task tasks, now the order for them does not matter in the tasks list.
+# CrewAI only allows one task with async_execution=True per crew, and it must be the last task in the task list
 event_management_crew = Crew(
     agents=[venue_coordinator, 
             logistics_manager, 

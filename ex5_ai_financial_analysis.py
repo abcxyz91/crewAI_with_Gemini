@@ -1,6 +1,7 @@
 from crewai import Agent, Task, Crew, LLM, Process
 from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 from dotenv import load_dotenv, find_dotenv
+from datetime import date
 import os, sys, json
 import warnings
 warnings.filterwarnings('ignore') # Suppress unimportant warnings
@@ -43,7 +44,7 @@ data_analyst_agent = Agent(
               "the Data Analyst Agent is the cornerstone for "
               "informing trading decisions.",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=False,
     tools = [scrape_tool, search_tool],
     llm=llm
 )
@@ -59,7 +60,7 @@ trading_strategy_agent = Agent(
               "the performance of different approaches to determine "
               "the most profitable and risk-averse options.",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=True, # Might delegate parts to Analyst or Risk if needed
     tools = [scrape_tool, search_tool],
     llm=llm
 )
@@ -75,7 +76,7 @@ execution_agent = Agent(
               "when and how trades should be executed to maximize "
               "efficiency and adherence to strategy.",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=False,
     tools = [scrape_tool, search_tool],
     llm=llm
 )
@@ -91,7 +92,7 @@ risk_management_agent = Agent(
               "risk exposure and suggests safeguards to ensure that "
               "trading activities align with the firm’s risk tolerance.",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=False,
     tools = [scrape_tool, search_tool],
     llm=llm
 )
@@ -103,7 +104,10 @@ data_analysis_task = Task(
         "Continuously monitor and analyze market data for "
         "the selected stock ({stock_selection}). "
         "Use statistical modeling and machine learning to "
-        "identify trends and predict market movements."
+        "identify trends and predict market movements. "
+        "Factor in real-time news sentiment and significant market events "
+        "if news impact is considered ({news_impact_consideration}). "
+        "Use up-to-date insights and market activity as of {current_date}."
     ),
     expected_output=(
         "Insights and alerts about significant market "
@@ -116,9 +120,10 @@ data_analysis_task = Task(
 strategy_development_task = Task(
     description=(
         "Develop and refine trading strategies based on "
-        "the insights from the Data Analyst and "
+        "the insights from the Data Analyst Agent and "
         "user-defined risk tolerance ({risk_tolerance}). "
-        "Consider trading preferences ({trading_strategy_preference})."
+        "Consider trading preferences ({trading_strategy_preference}) "
+        "and user's available capital ({initial_capital})."
     ),
     expected_output=(
         "A set of potential trading strategies for {stock_selection} "
@@ -130,8 +135,8 @@ strategy_development_task = Task(
 # Task 3: Plan Trade Execution
 execution_planning_task = Task(
     description=(
-        "Analyze approved trading strategies to determine the "
-        "best execution methods for {stock_selection}, "
+        "Based on the trading strategies developed by the Trading Strategy Agent "
+        "to determine the best execution methods for {stock_selection}, "
         "considering current market conditions and optimal pricing."
     ),
     expected_output=(
@@ -180,6 +185,9 @@ financial_trading_inputs = {
     'initial_capital': '100000',
     'risk_tolerance': 'Medium',
     'trading_strategy_preference': 'Day Trading',
-    'news_impact_consideration': True
+    'news_impact_consideration': True,
+    'current_date': str(date.today()) # using current date to improve time-sensitive analysis
 }
+
+# The value in result will be the output of the last task listed in the tasks=[...] array
 result = financial_trading_crew.kickoff(inputs=financial_trading_inputs)
