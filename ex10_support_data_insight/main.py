@@ -60,7 +60,7 @@ reporting_agent = Agent(
 
 chart_generation_agent = Agent(
   config=agents_config['chart_generation_agent'],
-  allow_code_execution=False # If set to True, agent can write and execute code in a protected environment using Docker
+  allow_code_execution=True # If set to True, agent can write and execute code in a protected environment using Docker
 )
 
 # Creating Tasks
@@ -108,4 +108,4 @@ support_report_crew = Crew(
 # After training, you can compare the performance before vs after training by running "crewai test" again
 # Or you can directly edit your .yaml files and validate through actual execution
 # Finally, run the final version of your Crew with the following command
-#result = support_report_crew.kickoff()
+result = support_report_crew.kickoff()

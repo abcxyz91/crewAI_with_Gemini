@@ -2,8 +2,8 @@ from crewai import Agent, Task, Crew, LLM, Flow
 from crewai.flow.flow import start, listen, and_, or_, router
 from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 from dotenv import load_dotenv, find_dotenv
-from typing import List
-from pydantic import BaseModel, Field, Optional
+from typing import List, Optional
+from pydantic import BaseModel, Field
 import os, yaml, json
 import warnings
 warnings.filterwarnings('ignore')
@@ -82,19 +82,19 @@ scrape_tool = ScrapeWebsiteTool()
 # Creating Agents
 lead_data_agent = Agent(
   config=lead_agents_config['lead_data_agent'],
-  tools=[SerperDevTool(), ScrapeWebsiteTool()],
+  tools=[search_tool, scrape_tool],
   llm=llm
 )
 
 cultural_fit_agent = Agent(
   config=lead_agents_config['cultural_fit_agent'],
-  tools=[SerperDevTool(), ScrapeWebsiteTool()],
+  tools=[search_tool, scrape_tool],
   llm=llm
 )
 
 scoring_validation_agent = Agent(
   config=lead_agents_config['scoring_validation_agent'],
-  tools=[SerperDevTool(), ScrapeWebsiteTool()],
+  tools=[search_tool, scrape_tool],
   llm=llm
 )
 
@@ -197,6 +197,7 @@ class SalesPipeline(Flow):
     # leads[0] will return scores[0] and so on
     scores = lead_scoring_crew.kickoff_for_each(leads)
     self.state["score_crews_results"] = scores
+    print(scores)
     return scores
 
   @listen(score_leads)
@@ -214,7 +215,9 @@ class SalesPipeline(Flow):
     # Logs leads only after both filtering and storing are done
     print(f"Leads: {leads}")
 
-  @router(filter_leads, paths=["high", "medium", "low"])
+  # This router decorator in the tutorial may be deprecated and no longer accept keyword argument
+  # Might need to re-wrote later
+  @router(filter_leads)
   def count_leads(self, scores):
     # Routes leads based on how many were filtered
     if len(scores) > 10:
